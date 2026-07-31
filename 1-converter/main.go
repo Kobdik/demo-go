@@ -12,12 +12,13 @@ func main() {
 		usdPerRub = 78.03
 	)
 	srcMap := createMap(usdPerEur, usdPerRub)
-	src, qnt, dst, price := readValues(srcMap)
+	src, qnt, dst, price := readValues(&srcMap)
 	fmt.Printf("Source currency: %s, quantity: %.2f, target currency: %s\n", src, qnt, dst)
 	cost := qnt * price // quantity of source * price of source in target currency
 	fmt.Printf("Итого: %.2f %s\n", cost, dst)
 }
 
+// map in map, keys: source and target currencies, value: price of source in target currency
 func createMap(usdPerEur, usdPerRub float64) map[string]DstMap {
 	return map[string]DstMap{
 		"usd": map[string]float64{
@@ -35,7 +36,7 @@ func createMap(usdPerEur, usdPerRub float64) map[string]DstMap {
 	}
 }
 
-func readValues(srcMap map[string]DstMap) (src string, qnt float64, dst string, price float64) {
+func readValues(srcMap *map[string]DstMap) (src string, qnt float64, dst string, price float64) {
 	var (
 		dstMap DstMap
 		ok     bool
@@ -43,7 +44,7 @@ func readValues(srcMap map[string]DstMap) (src string, qnt float64, dst string, 
 	for {
 		fmt.Print("Введите исходную валюту (usd, eur, rub): ")
 		fmt.Scan(&src)
-		dstMap, ok = srcMap[src]
+		dstMap, ok = (*srcMap)[src]
 		if !ok {
 			fmt.Println("Недопустимый ввод, повторите ввод исходной валюты.")
 			continue
