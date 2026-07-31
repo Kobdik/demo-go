@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-type DstMap = map[string]float64
+type DstMap = *map[string]float64
 
 func main() {
 	const (
@@ -21,15 +21,15 @@ func main() {
 // map in map, keys: source and target currencies, value: price of source in target currency
 func createMap(usdPerEur, usdPerRub float64) map[string]DstMap {
 	return map[string]DstMap{
-		"usd": map[string]float64{
+		"usd": &map[string]float64{
 			"eur": usdPerEur,
 			"rub": usdPerRub,
 		},
-		"eur": map[string]float64{
+		"eur": &map[string]float64{
 			"usd": 1.0 / usdPerEur,
 			"rub": usdPerRub / usdPerEur,
 		},
-		"rub": map[string]float64{
+		"rub": &map[string]float64{
 			"usd": 1.0 / usdPerRub,
 			"eur": usdPerEur / usdPerRub,
 		},
@@ -60,12 +60,12 @@ func readValues(srcMap *map[string]DstMap) (src string, qnt float64, dst string,
 	}
 	for {
 		fmt.Print("Введите целевую валюту ( ")
-		for dst = range dstMap {
+		for dst = range *dstMap {
 			fmt.Printf("%s ", dst)
 		}
 		fmt.Print("): ")
 		fmt.Scan(&dst) // целевая валюта
-		price, ok = dstMap[dst]
+		price, ok = (*dstMap)[dst]
 		if !ok {
 			fmt.Println("Недопустимый ввод, повторите ввод целевой валюты.")
 			continue
