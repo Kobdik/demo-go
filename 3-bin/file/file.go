@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func ReadFile(name string) ([]byte, error) {
@@ -14,13 +15,20 @@ func ReadFile(name string) ([]byte, error) {
 	return data, nil
 }
 
-func IsItJson(data []byte) (bool, error) {
+func IsItJsonContent(data []byte) (bool, error) {
 	var v any
 	err := json.Unmarshal(data, &v)
 	if err != nil {
 		return false, err
 	}
 	return true, nil
+}
+
+func IsItJsonExtension(name string) bool {
+	if ext := filepath.Ext(name); ext != ".json" {
+		return false
+	}
+	return true
 }
 
 func WriteFile(name string, content string) error {

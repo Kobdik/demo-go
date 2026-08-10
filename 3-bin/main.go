@@ -53,21 +53,26 @@ func main() {
 	fmt.Printf("Bins updated at %v\n", list.UpdatedAt)
 
 	fileName = "go.mod"
+	if file.IsItJsonExtension(fileName) {
+		fmt.Printf("%s has json extension\n", fileName)
+	} else {
+		fmt.Printf("%s has not json extention\n", fileName)
+	}
 	data, err := file.ReadFile(fileName)
 	if err != nil {
 		fmt.Printf("Can't read file %s cause %s\n", fileName, err)
 		return
 	}
-	isItJson, err := file.IsItJson(data)
+	isItJsonContent, err := file.IsItJsonContent(data)
 	if err != nil {
 		fmt.Printf("Can't unmarshal %s\n", fileName)
 		return
 	}
-	if isItJson {
-		fmt.Printf("%s is json file\n", fileName)
+	if isItJsonContent {
+		fmt.Printf("%s contains json content\n", fileName)
 		fmt.Println(string(data))
 	} else {
-		fmt.Printf("%s is not json file\n", fileName)
+		fmt.Printf("%s has not contains json content\n", fileName)
 	}
 }
 
