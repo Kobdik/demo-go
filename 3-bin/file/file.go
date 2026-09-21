@@ -7,8 +7,18 @@ import (
 	"path/filepath"
 )
 
-func ReadFile(name string) ([]byte, error) {
-	data, err := os.ReadFile(name)
+type JsonDb struct {
+	filename string
+}
+
+func NewJsonDb(name string) *JsonDb {
+	return &JsonDb{
+		filename: name,
+	}
+}
+
+func (db *JsonDb) Read() ([]byte, error) {
+	data, err := os.ReadFile(db.filename)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -31,16 +41,16 @@ func IsItJsonExtension(name string) bool {
 	return true
 }
 
-func WriteFile(name string, content string) error {
-	file, err := os.Create(name)
+func (db *JsonDb) Write(content []byte) error {
+	file, err := os.Create(db.filename)
 	if err != nil {
-		fmt.Printf("Can't create file %s\n", name)
+		fmt.Printf("Can't create file %s\n", db.filename)
 		return err
 	}
 	defer file.Close()
-	_, err = file.WriteString(content)
+	_, err = file.Write(content)
 	if err != nil {
-		fmt.Printf("Can't write content %s\n", content)
+		fmt.Printf("Can't write content to file %s\n", db.filename)
 		return err
 	}
 	return nil
