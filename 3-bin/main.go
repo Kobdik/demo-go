@@ -9,7 +9,9 @@ import (
 )
 
 func main() {
-	binList, err := bins.CreatetBinList(8)
+	fileName := "binList.json"
+	// dependency injection by interface
+	binList, err := bins.CreatetBinList(file.NewJsonDb(fileName), 8)
 	if err != nil {
 		fmt.Println("Can't create BinList")
 		return
@@ -29,50 +31,37 @@ func main() {
 	} else {
 		binList.AddBin(*b)
 	}
-
-	fileName := "binList.json"
-	ok, err := storage.WriteLocal(binList, fileName)
+	// save list
+	err = binList.Save()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	if !ok {
-		fmt.Println("Не удалось сохранить список в json-файл")
-		return
-	}
-
-	list, err := storage.ReadLocal(fileName)
+	// reload list
+	err = binList.Load()
 	if err != nil {
-		fmt.Printf("Can't read local file %s\n", fileName)
+		fmt.Println("Can't load binList")
 		return
 	}
-	fmt.Println("Local file read:")
-	for ind, bin := range list.Bins {
+	fmt.Println("Loaded list:")
+	for ind, bin := range binList.Bins {
 		fmt.Println(ind, bin)
 	}
-	fmt.Printf("Bins updated at %v\n", list.UpdatedAt)
+	fmt.Printf("Bins updated at %v\n", binList.UpdatedAt)
+	// dependency injection by interface
+	binList2, err := bins.CreatetBinList(storage.NewStorageDb("someStorageName"), 8)
+	binList2.AddBin(*a)
+	binList2.AddBin(*b)
+	for ind, bin := range binList2.Bins {
+		fmt.Println(ind, bin)
+	}
+	fmt.Printf("Bins updated at %v\n", binList2.UpdatedAt)
 
 	fileName = "go.mod"
 	if file.IsItJsonExtension(fileName) {
 		fmt.Printf("%s has json extension\n", fileName)
 	} else {
 		fmt.Printf("%s has not json extention\n", fileName)
-	}
-	data, err := file.ReadFile(fileName)
-	if err != nil {
-		fmt.Printf("Can't read file %s cause %s\n", fileName, err)
-		return
-	}
-	isItJsonContent, err := file.IsItJsonContent(data)
-	if err != nil {
-		fmt.Printf("Can't unmarshal %s\n", fileName)
-		return
-	}
-	if isItJsonContent {
-		fmt.Printf("%s contains json content\n", fileName)
-		fmt.Println(string(data))
-	} else {
-		fmt.Printf("%s has not contains json content\n", fileName)
 	}
 }
 
