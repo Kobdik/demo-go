@@ -5,11 +5,7 @@ import (
 	"fmt"
 )
 
-func SomeRequest() error {
-	conf, err := config.NewConfig()
-	if err != nil {
-		return err
-	}
+func SomeRequest(conf *config.Config) error {
 	fmt.Println(len(conf.Key))
 	return nil
 }

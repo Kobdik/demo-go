@@ -1,7 +1,9 @@
 package main
 
 import (
+	"demo-go/bin/api"
 	"demo-go/bin/bins"
+	"demo-go/bin/config"
 	"demo-go/bin/file"
 	"demo-go/bin/storage"
 
@@ -9,6 +11,13 @@ import (
 )
 
 func main() {
+	conf, err := config.NewConfig()
+	if err != nil {
+		fmt.Println("Can't create Config")
+		return
+	}
+	api.SomeRequest(conf)
+
 	fileName := "binList.json"
 	// dependency injection by interface
 	binList, err := bins.CreatetBinList(file.NewJsonDb(fileName), 8)
