@@ -3,6 +3,8 @@ package config
 import (
 	"errors"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -10,6 +12,10 @@ type Config struct {
 }
 
 func NewConfig() (*Config, error) {
+	err := godotenv.Load()
+	if err != nil {
+		return nil, errors.New("Ошибка загрузки .env файла")
+	}
 	key := os.Getenv("APP_KEY")
 	if key == "" {
 		return nil, errors.New("No key provided!")
